@@ -53,6 +53,7 @@ public class Search {
 	private static double TmemberFitness;
 
 	private static double fitnessStats[][];  // 0=Avg, 1=Best
+	private static int[][] input_table;
 
 /*******************************************************************************
 *                              CONSTRUCTORS                                    *
@@ -95,11 +96,27 @@ public class Search {
  
 		if (Parameters.problemType.equals("NM")){
 				problem = new NumberMatch();
-		}
-		else if (Parameters.problemType.equals("OM")){
+		} else if (Parameters.problemType.equals("OM")){
 				problem = new OneMax();
-		}
-		else System.out.println("Invalid Problem Type");
+		} else if (Parameters.problemType.equals("SC")){
+			BufferedReader input = new BufferedReader(new FileReader(new File("../input/testdata1")));
+
+			input_table = new int[35][7];
+            for(int i = 0; i < 35; i++) {
+            	if(i % 7 == 0){
+            		input.readLine();
+				}
+                for (int j = 0; j < 7; j++) {
+					input_table[i][j] = input.read();
+				}
+            }
+
+            problem = new Scheduler();
+
+		} else System.out.println("Invalid Problem Type");
+
+		ScheduleHelpers.printInput(input_table);
+
 
 		System.out.println(problem.name);
 
