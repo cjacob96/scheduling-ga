@@ -110,6 +110,15 @@ public class Search {
 				input.nextLine();
 			}
 
+			input.close();
+
+			System.out.println("Which representation would you like to run? (1, 2, 3)");
+			Scanner stdin = new Scanner(System.in);
+			int rep = stdin.nextInt();
+			System.out.println(rep);
+			Parameters.rep = rep;
+			stdin.close();
+
             problem = new Scheduler(input_table);
 
 		} else System.out.println("Invalid Problem Type");

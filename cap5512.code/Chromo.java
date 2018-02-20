@@ -39,32 +39,40 @@ public class Chromo
 		//a list of 5 times that they will occupy. Duplicates are allowed
 		//on different people, but discouraged in the fitness function
 		//Number of gene points gives the number of people to evaluate
-		chromo = new int[Parameters.numGenes][Parameters.geneSize];
+		if(Parameters.rep == 1){
 
-		for (int i=0; i<Parameters.numGenes; i++){
-			int[] person = new int[Parameters.geneSize];
-			Arrays.fill(person, -1);
-			for (int j=0; j<Parameters.geneSize; j++){
+			chromo = new int[Parameters.numGenes][Parameters.geneSize];
 
-				//Make sure any one person doesn't have duplicate times
-				while(IntStream.of(person).anyMatch(time -> time == randnum)){
-					randnum = Search.r.nextInt(35);
+			for (int i=0; i<Parameters.numGenes; i++){
+				int[] person = new int[Parameters.geneSize];
+				Arrays.fill(person, -1);
+				for (int j=0; j<Parameters.geneSize; j++){
+
+					//Make sure any one person doesn't have duplicate times
+					while(IntStream.of(person).anyMatch(time -> time == randnum)){
+						randnum = Search.r.nextInt(35);
+					}
+
+					// Keep track of this person's time slots
+					person[j] = randnum;
 				}
-
-				// Keep track of this person's time slots
-				person[j] = randnum;
+				//Replace this person gene in the chromosome with their time slots
+				chromo[i] = person;
 			}
-			//Replace this person gene in the chromosome with their time slots
-			chromo[i] = person;
-		}
 
 //		DEBUG
 //		ScheduleHelpers.printChromo(this);
 
-		this.rawFitness = -1;   //  Fitness not yet evaluated
-		this.sclFitness = -1;   //  Fitness not yet scaled
-		this.proFitness = -1;   //  Fitness not yet proportionalized
-	}
+			this.rawFitness = -1;   //  Fitness not yet evaluated
+			this.sclFitness = -1;   //  Fitness not yet scaled
+			this.proFitness = -1;   //  Fitness not yet proportionalized
+		} else if(Parameters.rep == 2){
+
+		} else if(Parameters.rep == 3){
+
+		}
+
+    }
 
 
 /*******************************************************************************
