@@ -4,8 +4,10 @@
 *******************************************************************************/
 
 import java.io.*;
+import java.sql.ParameterMetaData;
 import java.util.*;
 import java.text.*;
+import java.util.stream.IntStream;
 
 public class Chromo
 {
@@ -13,7 +15,7 @@ public class Chromo
 *                            INSTANCE VARIABLES                                *
 *******************************************************************************/
 
-	public String chromo;
+	public int[][] chromo;
 	public double rawFitness;
 	public double sclFitness;
 	public double proFitness;
@@ -22,7 +24,7 @@ public class Chromo
 *                            INSTANCE VARIABLES                                *
 *******************************************************************************/
 
-	private static double randnum;
+	private static int randnum;
 
 /*******************************************************************************
 *                              CONSTRUCTORS                                    *
@@ -30,17 +32,34 @@ public class Chromo
 
 	public Chromo(){
 
-		//  Set gene values to a randum sequence of 1's and 0's
-		char geneBit;
-		chromo = "";
+		//Person to be evaluated
+		//Gene Size is the number of times to evaluate
+
+		//Chromosome representation is a list of people who in turn have
+		//a list of 5 times that they will occupy. Duplicates are allowed
+		//on different people, but discouraged in the fitness function
+		//Number of gene points gives the number of people to evaluate
+		chromo = new int[Parameters.numGenes][Parameters.geneSize];
+
 		for (int i=0; i<Parameters.numGenes; i++){
+			int[] person = new int[Parameters.geneSize];
+			Arrays.fill(person, -1);
 			for (int j=0; j<Parameters.geneSize; j++){
-				randnum = Search.r.nextDouble();
-				if (randnum > 0.5) geneBit = '0';
-				else geneBit = '1';
-				this.chromo = chromo + geneBit;
+
+				//Make sure any one person doesn't have duplicate times
+				while(IntStream.of(person).anyMatch(time -> time == randnum)){
+					randnum = Search.r.nextInt(35);
+				}
+
+				// Keep track of this person's time slots
+				person[j] = randnum;
 			}
+			//Replace this person gene in the chromosome with their time slots
+			chromo[i] = person;
 		}
+
+//		DEBUG
+//		ScheduleHelpers.printChromo(this);
 
 		this.rawFitness = -1;   //  Fitness not yet evaluated
 		this.sclFitness = -1;   //  Fitness not yet scaled
@@ -54,72 +73,29 @@ public class Chromo
 
 	//  Get Alpha Represenation of a Gene **************************************
 
-	public String getGeneAlpha(int geneID){
-		int start = geneID * Parameters.geneSize;
-		int end = (geneID+1) * Parameters.geneSize;
-		String geneAlpha = this.chromo.substring(start, end);
-		return (geneAlpha);
+	public int getGeneAlpha(int geneID){
+		//TODO: Write Reprsentation Version
+		return 0;
 	}
 
 	//  Get Integer Value of a Gene (Positive or Negative, 2's Compliment) ****
 
-	public int getIntGeneValue(int geneID){
-		String geneAlpha = "";
-		int geneValue;
-		char geneSign;
-		char geneBit;
-		geneValue = 0;
-		geneAlpha = getGeneAlpha(geneID);
-		for (int i=Parameters.geneSize-1; i>=1; i--){
-			geneBit = geneAlpha.charAt(i);
-			if (geneBit == '1') geneValue = geneValue + (int) Math.pow(2.0, Parameters.geneSize-i-1);
-		}
-		geneSign = geneAlpha.charAt(0);
-		if (geneSign == '1') geneValue = geneValue - (int)Math.pow(2.0, Parameters.geneSize-1);
-		return (geneValue);
+	public int[] getIntGeneValue(int geneID){
+		//TODO: Write Representation Version
+		return new int[Parameters.geneSize];
 	}
 
 	//  Get Integer Value of a Gene (Positive only) ****************************
 
 	public int getPosIntGeneValue(int geneID){
-		String geneAlpha = "";
-		int geneValue;
-		char geneBit;
-		geneValue = 0;
-		geneAlpha = getGeneAlpha(geneID);
-		for (int i=Parameters.geneSize-1; i>=0; i--){
-			geneBit = geneAlpha.charAt(i);
-			if (geneBit == '1') geneValue = geneValue + (int) Math.pow(2.0, Parameters.geneSize-i-1);
-		}
-		return (geneValue);
+		//TODO: Write Reprsentation Version
+		return 0;
 	}
 
 	//  Mutate a Chromosome Based on Mutation Type *****************************
 
 	public void doMutation(){
-
-		String mutChromo = "";
-		char x;
-
-		switch (Parameters.mutationType){
-
-		case 1:     //  Replace with new random number
-
-			for (int j=0; j<(Parameters.geneSize * Parameters.numGenes); j++){
-				x = this.chromo.charAt(j);
-				randnum = Search.r.nextDouble();
-				if (randnum < Parameters.mutationRate){
-					if (x == '1') x = '0';
-					else x = '1';
-				}
-				mutChromo = mutChromo + x;
-			}
-			this.chromo = mutChromo;
-			break;
-
-		default:
-			System.out.println("ERROR - No mutation method selected");
-		}
+		//TODO: Write Reprsentation Version
 	}
 
 /*******************************************************************************
@@ -130,80 +106,19 @@ public class Chromo
 
 	public static int selectParent(){
 
-		double rWheel = 0;
-		int j = 0;
-		int k = 0;
-
-		switch (Parameters.selectType){
-
-		case 1:     // Proportional Selection
-			randnum = Search.r.nextDouble();
-			for (j=0; j<Parameters.popSize; j++){
-				rWheel = rWheel + Search.member[j].proFitness;
-				if (randnum < rWheel) return(j);
-			}
-			break;
-
-		case 3:     // Random Selection
-			randnum = Search.r.nextDouble();
-			j = (int) (randnum * Parameters.popSize);
-			return(j);
-
-		case 2:     //  Tournament Selection
-
-		default:
-			System.out.println("ERROR - No selection method selected");
-		}
-	return(-1);
+		return Search.r.nextInt(Parameters.popSize);
 	}
 
 	//  Produce a new child from two parents  **********************************
 
 	public static void mateParents(int pnum1, int pnum2, Chromo parent1, Chromo parent2, Chromo child1, Chromo child2){
-
-		int xoverPoint1;
-		int xoverPoint2;
-
-		switch (Parameters.xoverType){
-
-		case 1:     //  Single Point Crossover
-
-			//  Select crossover point
-			xoverPoint1 = 1 + (int)(Search.r.nextDouble() * (Parameters.numGenes * Parameters.geneSize-1));
-
-			//  Create child chromosome from parental material
-			child1.chromo = parent1.chromo.substring(0,xoverPoint1) + parent2.chromo.substring(xoverPoint1);
-			child2.chromo = parent2.chromo.substring(0,xoverPoint1) + parent1.chromo.substring(xoverPoint1);
-			break;
-
-		case 2:     //  Two Point Crossover
-
-		case 3:     //  Uniform Crossover
-
-		default:
-			System.out.println("ERROR - Bad crossover method selected");
-		}
-
-		//  Set fitness values back to zero
-		child1.rawFitness = -1;   //  Fitness not yet evaluated
-		child1.sclFitness = -1;   //  Fitness not yet scaled
-		child1.proFitness = -1;   //  Fitness not yet proportionalized
-		child2.rawFitness = -1;   //  Fitness not yet evaluated
-		child2.sclFitness = -1;   //  Fitness not yet scaled
-		child2.proFitness = -1;   //  Fitness not yet proportionalized
+		//TODO: Write Representation Version
 	}
 
 	//  Produce a new child from a single parent  ******************************
 
 	public static void mateParents(int pnum, Chromo parent, Chromo child){
-
-		//  Create child chromosome from parental material
-		child.chromo = parent.chromo;
-
-		//  Set fitness values back to zero
-		child.rawFitness = -1;   //  Fitness not yet evaluated
-		child.sclFitness = -1;   //  Fitness not yet scaled
-		child.proFitness = -1;   //  Fitness not yet proportionalized
+		//TODO: Write Representation Version
 	}
 
 	//  Copy one chromosome to another  ***************************************
