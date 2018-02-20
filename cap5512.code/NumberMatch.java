@@ -45,28 +45,28 @@ public class NumberMatch extends FitnessFunction{
 
 	public void doRawFitness(Chromo X){
 
-		double difference = 0;
-		for (int j=0; j<Parameters.numGenes; j++){
-			difference = (double) Math.abs(X.getIntGeneValue(j) - testValue[j]);
-			X.rawFitness = X.rawFitness + difference;
-		}
+//		double difference = 0;
+//		for (int j=0; j<Parameters.numGenes; j++){
+//			difference = (double) Math.abs(X.getIntGeneValue(j) - testValue[j]);
+//			X.rawFitness = X.rawFitness + difference;
+//		}
 	}
 
 //  PRINT OUT AN INDIVIDUAL GENE TO THE SUMMARY FILE *********************************
 
 	public void doPrintGenes(Chromo X, FileWriter output) throws java.io.IOException{
-
-		for (int i=0; i<Parameters.numGenes; i++){
-			Hwrite.right(X.getGeneAlpha(i),11,output);
-		}
-		output.write("   RawFitness");
-		output.write("\n        ");
-		for (int i=0; i<Parameters.numGenes; i++){
-			Hwrite.right(X.getIntGeneValue(i),11,output);
-		}
-		Hwrite.right((int) X.rawFitness,13,output);
-		output.write("\n\n");
-		return;
+//
+//		for (int i=0; i<Parameters.numGenes; i++){
+//			Hwrite.right(X.getGeneAlpha(i),11,output);
+//		}
+//		output.write("   RawFitness");
+//		output.write("\n        ");
+//		for (int i=0; i<Parameters.numGenes; i++){
+//			Hwrite.right(X.getIntGeneValue(i),11,output);
+//		}
+//		Hwrite.right((int) X.rawFitness,13,output);
+//		output.write("\n\n");
+//		return;
 	}
 
 /*******************************************************************************
