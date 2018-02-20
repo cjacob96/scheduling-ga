@@ -38,6 +38,8 @@ public class Parameters
 	public static long seed;
 	public static int numGenes;
 	public static int geneSize;
+	public static int numDays = 7;
+	public static int numTimeSlots = 5;
 
 /*******************************************************************************
 *                              CONSTRUCTORS                                    *

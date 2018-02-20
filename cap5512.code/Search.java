@@ -99,23 +99,23 @@ public class Search {
 		} else if (Parameters.problemType.equals("OM")){
 				problem = new OneMax();
 		} else if (Parameters.problemType.equals("SC")){
-			BufferedReader input = new BufferedReader(new FileReader(new File("../input/testdata1")));
+			Scanner input = new Scanner(new File("../input/testdata1"));
 
-			input_table = new int[35][7];
-            for(int i = 0; i < 35; i++) {
-            	if(i % 7 == 0){
-            		input.readLine();
+			input_table = new int[Parameters.numGenes][Parameters.numTimeSlots * Parameters.numDays];
+			for(int i = 0; i < Parameters.numGenes; i++){
+				String s = input.nextLine();
+				for(int j = 0; j < Parameters.numDays * Parameters.numTimeSlots; j++){
+						input_table[i][j] = input.nextInt();
 				}
-                for (int j = 0; j < 7; j++) {
-					input_table[i][j] = input.read();
-				}
-            }
+				input.nextLine();
+			}
 
-            problem = new Scheduler();
+            problem = new Scheduler(input_table);
 
 		} else System.out.println("Invalid Problem Type");
 
-		ScheduleHelpers.printInput(input_table);
+//		DEBUG
+//		ScheduleHelpers.printInput(input_table);
 
 
 		System.out.println(problem.name);
