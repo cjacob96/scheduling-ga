@@ -16,6 +16,8 @@ public class Scheduler extends FitnessFunction{
     int[] countDuplicates = new int[Parameters.geneSize * Parameters.numGenes];
     int countInvalid;
 
+    int rep;
+
     //The input table which contains preferences
     int[][] table;
 
@@ -48,51 +50,54 @@ public class Scheduler extends FitnessFunction{
     @Override
     public void doRawFitness(Chromo X){
 
-        //Initialize counters to 0
-        countInvalid = 0;
-        Arrays.fill(countDuplicates, 0);
+        if(Parameters.rep == 1){
+            //Initialize counters to 0
+            countInvalid = 0;
+            Arrays.fill(countDuplicates, 0);
 
-        //Initialize raw fitness to 0
-        //Best fitness: Parameters.numGenes * Paremeters.geneSize (35)
-        //High fitness values indicate invalid solutions
-        //Attempt to minimize
-        X.rawFitness = 0;
+            //Initialize raw fitness to 0
+            //Best fitness: Parameters.numGenes * Paremeters.geneSize (35)
+            //High fitness values indicate invalid solutions
+            //Attempt to minimize
+            X.rawFitness = 0;
 
-        //Count how many duplicates and invalid time slots are in the current chromosome
-        for(int i = 0; i < Parameters.numGenes; i++){
-            for(int j = 0; j < Parameters.geneSize; j++){
+            //Count how many duplicates and invalid time slots are in the current chromosome
+            for(int i = 0; i < Parameters.numGenes; i++){
+                for(int j = 0; j < Parameters.geneSize; j++){
 
-                //The current chromosome time slot we're looking at
-                int curChromoTimeSlot = X.chromo[i][j];
+                    //The current chromosome time slot we're looking at
+                    int curChromoTimeSlot = X.chromo[i][j];
 
-                //If we find duplicates, harshly penalize having multiple people occupying
-                //the same time slot
-                //Otherwise, default increase the value by 1 since this time slot is taken
-                countDuplicates[curChromoTimeSlot]++;
-                if(countDuplicates[curChromoTimeSlot] == 1){
-                    X.rawFitness += 1;
-                }
-                else if(countDuplicates[curChromoTimeSlot] > 1){
-                    X.rawFitness += countDuplicates[curChromoTimeSlot] * 50;
-                }
+                    //If we find duplicates, harshly penalize having multiple people occupying
+                    //the same time slot
+                    //Otherwise, default increase the value by 1 since this time slot is taken
+                    countDuplicates[curChromoTimeSlot]++;
+                    if(countDuplicates[curChromoTimeSlot] == 1){
+                        X.rawFitness += 1;
+                    }
+                    else if(countDuplicates[curChromoTimeSlot] > 1){
+                        X.rawFitness += countDuplicates[curChromoTimeSlot] * 50;
+                    }
 
-                //Check to see if this chromosome time slot is available for this person
-                if((this.table[i][curChromoTimeSlot] == 0)){
-                    countInvalid++;
+                    //Check to see if this chromosome time slot is available for this person
+                    if((this.table[i][curChromoTimeSlot] == 0)){
+                        countInvalid++;
+                    }
                 }
             }
-        }
 
-        //If someone was placed in time slots that they cannot make, harshly penalize them
-        if(this.countInvalid > 0){
-            X.rawFitness += 50 * countInvalid;
-        }
+            //If someone was placed in time slots that they cannot make, harshly penalize them
+            if(this.countInvalid > 0){
+                X.rawFitness += 50 * countInvalid;
+            }
 
-        //DEBUG
+            //DEBUG
 //        ScheduleHelpers.printFitness(this);
 
-        //The raw fitness of this chromo
-        System.out.println(X.rawFitness);
+            //The raw fitness of this chromo
+            System.out.println(X.rawFitness);
+
+        }
     }
 
 //  PRINT OUT AN INDIVIDUAL GENE TO THE SUMMARY FILE *********************************

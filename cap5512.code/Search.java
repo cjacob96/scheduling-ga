@@ -113,11 +113,16 @@ public class Search {
 			input.close();
 
 			System.out.println("Which representation would you like to run? (1, 2, 3)");
-			Scanner stdin = new Scanner(System.in);
-			int rep = stdin.nextInt();
-			System.out.println(rep);
-			Parameters.rep = rep;
-			stdin.close();
+			if(args.length < 2){
+				Scanner stdin = new Scanner(System.in);
+				int rep = stdin.nextInt();
+				System.out.println(rep);
+				Parameters.rep = rep;
+				stdin.close();
+			} else{
+				int rep = Integer.parseInt(args[1]);
+				Parameters.rep = rep;
+			}
 
             problem = new Scheduler(input_table);
 
