@@ -56,7 +56,6 @@ public class Scheduler extends FitnessFunction{
             Arrays.fill(countDuplicates, 0);
 
             //Initialize raw fitness to 0
-            //Best fitness: Parameters.numGenes * Paremeters.geneSize (35)
             //High fitness values indicate invalid solutions
             //Attempt to minimize
             X.rawFitness = 0;
@@ -73,7 +72,7 @@ public class Scheduler extends FitnessFunction{
                     //Otherwise, default increase the value by 1 since this time slot is taken
                     countDuplicates[curChromoTimeSlot]++;
                     if(countDuplicates[curChromoTimeSlot] == 1){
-                        X.rawFitness += 1;
+                        X.rawFitness += this.table[i][curChromoTimeSlot];
                     }
                     else if(countDuplicates[curChromoTimeSlot] > 1){
                         X.rawFitness += countDuplicates[curChromoTimeSlot] * 50;
@@ -94,8 +93,8 @@ public class Scheduler extends FitnessFunction{
             //DEBUG
 //        ScheduleHelpers.printFitness(this);
 
-            //The raw fitness of this chromo
-            System.out.println(X.rawFitness);
+             //The raw fitness of this chromo
+//            System.out.println(X.rawFitness);
 
         }
     }

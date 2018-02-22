@@ -3,6 +3,8 @@
 *  Version 2, January 18, 2004
 *******************************************************************************/
 
+import com.sun.org.apache.xpath.internal.SourceTree;
+
 import java.io.*;
 import java.sql.ParameterMetaData;
 import java.util.*;
@@ -104,6 +106,31 @@ public class Chromo
 
 	public void doMutation(){
 		//TODO: Write Reprsentation Version
+
+		switch(Parameters.mutationType){
+			case 1:
+				for(int i = 0; i < Parameters.numGenes; i++){
+					for(int j = 0; j < Parameters.geneSize; j++) {
+						double rand = Search.r.nextDouble();
+						if(rand < Parameters.mutationRate){
+							rand = Search.r.nextDouble();
+							randnum = Search.r.nextInt(5);
+							if(rand < 0.7){
+								this.chromo[i][j] = (randnum * (this.chromo[i][j] % 7));
+							}else{
+								this.chromo[i][j] = (randnum * ((int)Math.floor(this.chromo[i][j] / 7)));
+							}
+
+
+                            randnum = Search.r.nextInt(35);
+							this.chromo[i][j] = randnum;
+						}
+					}
+				}
+				break;
+			default:
+				System.out.println("ERROR - No mutation method selected");
+		}
 	}
 
 /*******************************************************************************
@@ -114,19 +141,93 @@ public class Chromo
 
 	public static int selectParent(){
 
-		return Search.r.nextInt(Parameters.popSize);
+		double rWheel = 0;
+		int j = 0;
+		int k = 0;
+
+		double rand;
+
+		switch(Parameters.selectType){
+			case 1:
+				rand = Search.r.nextDouble();
+				for(j = 0; j < Parameters.popSize; j++){
+					rWheel = rWheel + Search.member[j].proFitness;
+					if(rand < rWheel) return j;
+				}
+				break;
+			case 3:
+				rand = Search.r.nextDouble();
+				j = (int) (rand * Parameters.popSize);
+				return j;
+			case 2:
+				rand = Search.r.nextDouble();
+				int randComp1 = Search.r.nextInt(Parameters.popSize);
+				int randComp2 = Search.r.nextInt(Parameters.popSize);
+				if(rand < 0.9){
+					if(Search.member[randComp1].rawFitness < Search.member[randComp2].rawFitness){
+						return randComp2;
+					} else{
+						return randComp1;
+					}
+				}else{
+					if(Search.member[randComp1].rawFitness < Search.member[randComp2].rawFitness) {
+						return randComp1;
+					}else{
+						return randComp2;
+					}
+				}
+			default:
+				System.out.println("ERROR - No selection method selected");
+		}
+		return -1;
 	}
 
 	//  Produce a new child from two parents  **********************************
 
 	public static void mateParents(int pnum1, int pnum2, Chromo parent1, Chromo parent2, Chromo child1, Chromo child2){
 		//TODO: Write Representation Version
+
+		int xoverPoint1;
+		int xoverPoint2;
+
+		switch(Parameters.xoverType){
+			case 1:
+				xoverPoint1 = Search.r.nextInt(35);
+
+                for(int i = 0; i < Parameters.numGenes; i++){
+                    for(int j = 0; j < Parameters.geneSize; j++){
+                        if(((i * Parameters.numGenes) + j) < xoverPoint1){
+                            child1.chromo[i][j] = parent1.chromo[i][j];
+                            child2.chromo[i][j] = parent2.chromo[i][j];
+                        }else{
+                            child1.chromo[i][j] = parent2.chromo[i][j];
+                            child2.chromo[i][j] = parent1.chromo[i][j];
+                        }
+                    }
+                }
+				break;
+			default:
+				System.out.println("ERROR - Bad crossover method selected");
+		}
+
+		child1.rawFitness = -1;
+		child1.sclFitness = -1;
+		child1.proFitness = -1;
+		child2.rawFitness = -1;
+		child2.sclFitness = -1;
+		child2.proFitness = -1;
+
 	}
+
 
 	//  Produce a new child from a single parent  ******************************
 
 	public static void mateParents(int pnum, Chromo parent, Chromo child){
-		//TODO: Write Representation Version
+		child.chromo = parent.chromo;
+
+		child.rawFitness = -1;
+		child.sclFitness = -1;
+		child.proFitness = -1;
 	}
 
 	//  Copy one chromosome to another  ***************************************

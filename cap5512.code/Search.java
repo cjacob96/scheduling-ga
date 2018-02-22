@@ -25,6 +25,7 @@ public class Search {
 	public static Chromo bestOfGenChromo;
 	public static int bestOfGenR;
 	public static int bestOfGenG;
+	public static int bestOfGenGIndex;
 	public static Chromo bestOfRunChromo;
 	public static int bestOfRunR;
 	public static int bestOfRunG;
@@ -54,6 +55,9 @@ public class Search {
 
 	private static double fitnessStats[][];  // 0=Avg, 1=Best
 	private static int[][] input_table;
+	public static double bestOfRunFitness;
+	public static int optimalGen;
+	public static double bestOfGenFitness;
 
 /*******************************************************************************
 *                              CONSTRUCTORS                                    *
@@ -80,8 +84,14 @@ public class Search {
 
 	//  Write Parameters To Summary Output File
 		String summaryFileName = Parameters.expID + "_summary.txt";
+		FileWriter testingGen = new FileWriter("testingGen.txt");
 		FileWriter summaryOutput = new FileWriter(summaryFileName);
 		parmValues.outputParameters(summaryOutput);
+
+		double runBestFitnesses[][] = new double[Parameters.numRuns][Parameters.generations];
+		double runAveragePopFitnesses[][] = new double[Parameters.numRuns][Parameters.generations];
+		double bestFitnessOfRuns[] = new double[Parameters.numRuns];
+		int optimal[] = new int[Parameters.numRuns];
 
 	//	Set up Fitness Statistics matrix
 		fitnessStats = new double[2][Parameters.generations];
@@ -135,7 +145,7 @@ public class Search {
 		System.out.println(problem.name);
 
 	//	Initialize RNG, array sizes and other objects
-		r.setSeed(Parameters.seed);
+//		r.setSeed(Parameters.seed);
 		memberIndex = new int[Parameters.popSize];
 		memberFitness = new double[Parameters.popSize];
 		member = new Chromo[Parameters.popSize];
@@ -211,11 +221,14 @@ public class Search {
 							Chromo.copyB2A(bestOfGenChromo, member[i]);
 							bestOfGenR = R;
 							bestOfGenG = G;
+							bestOfGenGIndex = i;
+							bestOfGenFitness = member[i].rawFitness;
 						}
 						if (member[i].rawFitness < bestOfRunChromo.rawFitness){
 							Chromo.copyB2A(bestOfRunChromo, member[i]);
 							bestOfRunR = R;
 							bestOfRunG = G;
+							bestOfRunFitness = member[i].rawFitness;
 						}
 						if (member[i].rawFitness < bestOverAllChromo.rawFitness){
 							Chromo.copyB2A(bestOverAllChromo, member[i]);
@@ -376,20 +389,103 @@ public class Search {
 
 				//	Swap Children with Last Generation
 				for (int i=0; i<Parameters.popSize; i++){
-					Chromo.copyB2A(member[i], child[i]);
+					if(i != bestOfGenGIndex) {
+						Chromo.copyB2A(member[i], child[i]);
+					}
 				}
+
+//				System.out.println(bestOfGenChromo.rawFitness);
+
+				runBestFitnesses[R-1][G] = bestOfGenFitness;
+				runAveragePopFitnesses[R-1][G] = averageRawFitness;
 
 			} //  Repeat the above loop for each generation
 
 			Hwrite.left(bestOfRunR, 4, summaryOutput);
 			Hwrite.right(bestOfRunG, 4, summaryOutput);
 
+			System.out.println(bestOfRunR + " " + bestOfRunG);
+
 			problem.doPrintGenes(bestOfRunChromo, summaryOutput);
+
+			bestFitnessOfRuns[R-1] = bestOfRunFitness;
 
 			System.out.println(R + "\t" + "B" + "\t"+ (int)bestOfRunChromo.rawFitness);
 
 		} //End of a Run
 
+		//Calculate for python file
+		//
+		for(int i = 0; i < Parameters.generations; i++){
+			double averageOfBest = 0;
+			double averageOfAvg = 0;
+			double sumOfBest = 0;
+			double sumOfAvg = 0;
+
+			for(int j=0; j< Parameters.numRuns; j++){
+				sumOfBest += runBestFitnesses[j][i];
+				sumOfAvg += runAveragePopFitnesses[j][i];
+			}
+
+			averageOfBest = sumOfBest / Parameters.numRuns;
+			averageOfAvg = sumOfAvg / Parameters.numRuns;
+			sumOfBest = 0;
+			sumOfAvg = 0;
+			for(int j=0; j< Parameters.numRuns; j++){
+				sumOfBest += Math.pow((runBestFitnesses[j][i] - averageOfBest), 2);
+				sumOfAvg += Math.pow((runAveragePopFitnesses[j][i] - averageOfAvg), 2);
+			}
+			double stdOfBest;
+			double stdOfAvg;
+
+			stdOfBest = Math.sqrt(sumOfBest / Parameters.numRuns);
+			stdOfAvg = Math.sqrt(sumOfAvg / Parameters.numRuns);
+
+			testingGen.write(averageOfBest + " " + stdOfBest + " " + averageOfAvg + " " + stdOfAvg + "\n");
+		}
+
+		int sumOfOptimal = 0;
+		double sumOfAverageBest = 0;
+		for(int i =0; i < Parameters.numRuns; i++){
+
+			int optimalGen = -1;
+			if(optimal[i] != -1){
+				sumOfOptimal += optimal[i];
+			}
+
+			sumOfAverageBest += bestFitnessOfRuns[i];
+
+
+		}
+
+		double averageGenOfOptimal;
+		averageGenOfOptimal = sumOfOptimal / Parameters.numRuns;
+		sumOfOptimal = 0;
+
+		double averageOfAverageBest;
+		averageOfAverageBest = sumOfAverageBest / Parameters.numRuns;
+		sumOfAverageBest = 0;
+
+		double stdOfOptimal;
+		double stdOfBest;
+		stdOfOptimal = 0;
+		stdOfBest = 0;
+
+		for(int i=0; i< Parameters.numRuns; i++){
+			sumOfOptimal += Math.pow((optimal[i] - averageGenOfOptimal), 2);
+			sumOfAverageBest +=  Math.pow(bestFitnessOfRuns[i] - averageOfAverageBest, 2);
+		}
+
+		stdOfOptimal = Math.sqrt(sumOfOptimal / Parameters.numRuns);
+		stdOfBest = Math.sqrt(sumOfAverageBest / Parameters.numRuns);
+
+		testingGen.write(averageOfAverageBest + " " + stdOfBest + " " + averageGenOfOptimal + " " + stdOfOptimal + "\n");
+
+		testingGen.close();
+		//
+		//
+
+		ScheduleHelpers.printChromo(bestOverAllChromo);
 		Hwrite.left("B", 8, summaryOutput);
 
 		problem.doPrintGenes(bestOverAllChromo, summaryOutput);
