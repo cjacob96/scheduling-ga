@@ -13,6 +13,10 @@ import java.util.stream.IntStream;
 
 public class Chromo
 {
+
+	//Debug variables
+	public final boolean DEBUG = true;
+
 /*******************************************************************************
 *                            INSTANCE VARIABLES                                *
 *******************************************************************************/
@@ -69,6 +73,33 @@ public class Chromo
 			this.sclFitness = -1;   //  Fitness not yet scaled
 			this.proFitness = -1;   //  Fitness not yet proportionalized
 		} else if(Parameters.rep == 2){
+			//In representation 2, each gene (slot) has a choice of 7 persons
+			//numGenes = 35, geneSize = 1
+			chromo = new int[35][1];
+
+			//Generate a random permutation of indices
+			List<Integer> list = new ArrayList<Integer>();
+			for (int i = 0; i < 35; i++){
+				list.add(i);
+			}
+			Collections.shuffle(list);
+
+			/*if (DEBUG){
+				System.out.println("Shuffled indices: ");
+				for (int i = 0; i < 35; i++){
+					System.out.println(list.get(i));
+				}
+			}*/
+			
+			for (int i = 0; i < 7; i++){
+				for (int j = 0; j < 5; j++){
+					chromo[list.get(i * 5 + j)][0] = i;
+				}
+			}
+
+			this.rawFitness = -1;
+			this.sclFitness = -1;
+			this.proFitness = -1;
 
 		} else if(Parameters.rep == 3){
 
@@ -108,7 +139,7 @@ public class Chromo
 		//TODO: Write Reprsentation Version
 
 		switch(Parameters.mutationType){
-			case 1:
+			/*case 1:
 				for(int i = 0; i < Parameters.numGenes; i++){
 					for(int j = 0; j < Parameters.geneSize; j++) {
 						double rand = Search.r.nextDouble();
@@ -124,6 +155,18 @@ public class Chromo
 
                             randnum = Search.r.nextInt(35);
 							this.chromo[i][j] = randnum;
+						}
+					}
+				}
+				break;*/
+			case 1:
+				for (int i = 0; i < Parameters.numGenes; i++){
+					for (int j = 0; j < Parameters.geneSize; j++){
+						randnum = Search.r.nextDouble();
+						if (randnum < Parameters.mutationRate){
+							//assign this seat randomly to another preson
+							int rand_person = r.nextInt(7);
+							this.chromo[i][j] = rand_person;
 						}
 					}
 				}
@@ -196,7 +239,7 @@ public class Chromo
 
                 for(int i = 0; i < Parameters.numGenes; i++){
                     for(int j = 0; j < Parameters.geneSize; j++){
-                        if(((i * Parameters.numGenes) + j) < xoverPoint1){
+                        if(i < xoverPoint1){
                             child1.chromo[i][j] = parent1.chromo[i][j];
                             child2.chromo[i][j] = parent2.chromo[i][j];
                         }else{

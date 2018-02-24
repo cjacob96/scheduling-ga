@@ -6,6 +6,9 @@ import java.util.Arrays;
  */
 public class Scheduler extends FitnessFunction{
 
+	//Debug variable
+	public final boolean DEBUG = true;	
+
 /*******************************************************************************
  *                            INSTANCE VARIABLES                                *
  *******************************************************************************/
@@ -96,7 +99,42 @@ public class Scheduler extends FitnessFunction{
              //The raw fitness of this chromo
 //            System.out.println(X.rawFitness);
 
-        }
+        } else if (Parameters.rep == 2){
+			//Initialize raw fitness to 0 first
+			X.rawFitness = 0;
+			if (DEBUG){
+				System.out.println("Chromo is: ");
+				for (int i = 0; i < Parameters.numGenes; i++){
+					for (int j = 0; j < Parameters.geneSize; j++){
+						System.out.print(X.chromo[i][j] + " ");
+					}
+				}
+				System.out.println();
+			}
+			//Construct a 7-element array to track how many slots are assigned to the ith person
+			int[] assignment = {0,0,0,0,0,0,0};
+			for (int i = 0; i < Parameters.numGenes; i++){
+				for (int j = 0; j < Parameters.geneSize; j++){
+					assignment[X.chromo[i][j]] += 1;
+					//Make sure this slot is assigned to a person which has not been assigned five times otherwise penalize the slot
+					if (assignment[X.chromo[i][j]] >= 6){
+						X.rawFitness += 50;
+					} else {
+						//Make sure the slot is assigned as each person's preference
+						if (this.table[X.chromo[i][j]][i] == 0){
+							X.rawFitness += 50;
+						} else {
+							X.rawFitness += this.table[X.chromo[i][j]][i];
+						}
+					}
+				}
+			}
+			/*if (DEBUG){
+				System.out.println("Raw fitness is: ");
+				System.out.println(X.rawFitness);
+				System.exit(0);
+			}*/
+		}
     }
 
 //  PRINT OUT AN INDIVIDUAL GENE TO THE SUMMARY FILE *********************************

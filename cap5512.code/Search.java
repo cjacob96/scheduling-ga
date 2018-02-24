@@ -9,6 +9,9 @@ import java.text.*;
 
 public class Search {
 
+	//Debug variable
+	public static boolean DEBUG = true;
+
 /*******************************************************************************
 *                           INSTANCE VARIABLES                                 *
 *******************************************************************************/
@@ -111,8 +114,10 @@ public class Search {
 		} else if (Parameters.problemType.equals("SC")){
 			Scanner input = new Scanner(new File("../input/testdata1"));
 
-			input_table = new int[Parameters.numGenes][Parameters.numTimeSlots * Parameters.numDays];
-			for(int i = 0; i < Parameters.numGenes; i++){
+			//construct a 7 * 35 preference table
+			input_table = new int[7][Parameters.numTimeSlots * Parameters.numDays];
+
+			for(int i = 0; i < 7; i++){
 				String s = input.nextLine();
 				for(int j = 0; j < Parameters.numDays * Parameters.numTimeSlots; j++){
 						input_table[i][j] = input.nextInt();
@@ -121,6 +126,14 @@ public class Search {
 			}
 
 			input.close();
+
+			if (DEBUG){
+				for (int i = 0; i < 7; i++){
+					for (int j = 0; j < 35; j++){
+						System.out.print(input_table[i][j] + " ");
+					}
+				}
+			}
 
 			System.out.println("Which representation would you like to run? (1, 2, 3)");
 			if(args.length < 2){
@@ -166,7 +179,7 @@ public class Search {
 		bestOverAllChromo.rawFitness = defaultBest;
 
 		//  Start program for multiple runs
-		for (R = 1; R <= Parameters.numRuns; R++){
+		for (R = 0; R <= Parameters.numRuns; R++){
 
 			bestOfRunChromo.rawFitness = defaultBest;
 			System.out.println();
@@ -393,11 +406,12 @@ public class Search {
 						Chromo.copyB2A(member[i], child[i]);
 					}
 				}
+			
+				if (DEBUG)	
+					System.out.println(bestOfGenChromo.rawFitness);
 
-//				System.out.println(bestOfGenChromo.rawFitness);
-
-				runBestFitnesses[R-1][G] = bestOfGenFitness;
-				runAveragePopFitnesses[R-1][G] = averageRawFitness;
+				runBestFitnesses[R][G] = bestOfGenFitness;
+				runAveragePopFitnesses[R][G] = averageRawFitness;
 
 			} //  Repeat the above loop for each generation
 
@@ -408,11 +422,13 @@ public class Search {
 
 			problem.doPrintGenes(bestOfRunChromo, summaryOutput);
 
-			bestFitnessOfRuns[R-1] = bestOfRunFitness;
+			bestFitnessOfRuns[R] = bestOfRunFitness;
 
 			System.out.println(R + "\t" + "B" + "\t"+ (int)bestOfRunChromo.rawFitness);
 
 		} //End of a Run
+
+		System.exit(0);
 
 		//Calculate for python file
 		//
