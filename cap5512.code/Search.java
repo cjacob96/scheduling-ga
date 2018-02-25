@@ -127,13 +127,12 @@ public class Search {
 
 			input.close();
 
-			if (DEBUG){
-				for (int i = 0; i < 7; i++){
-					for (int j = 0; j < 35; j++){
-						System.out.print(input_table[i][j] + " ");
-					}
+			/*for (int i = 0; i < 7; i++){
+				for (int j = 0; j < 35; j++){
+					System.out.print(input_table[i][j] + " ");
 				}
 			}
+			System.exit(0);*/
 
 			System.out.println("Which representation would you like to run? (1, 2, 3)");
 			if(args.length < 2){
@@ -179,7 +178,7 @@ public class Search {
 		bestOverAllChromo.rawFitness = defaultBest;
 
 		//  Start program for multiple runs
-		for (R = 0; R <= Parameters.numRuns; R++){
+		for (R = 0; R < Parameters.numRuns; R++){
 
 			bestOfRunChromo.rawFitness = defaultBest;
 			System.out.println();
@@ -407,8 +406,8 @@ public class Search {
 					}
 				}
 			
-				if (DEBUG)	
-					System.out.println(bestOfGenChromo.rawFitness);
+				/*if (DEBUG)	
+					System.out.println(bestOfGenChromo.rawFitness);*/
 
 				runBestFitnesses[R][G] = bestOfGenFitness;
 				runAveragePopFitnesses[R][G] = averageRawFitness;
@@ -418,19 +417,23 @@ public class Search {
 			Hwrite.left(bestOfRunR, 4, summaryOutput);
 			Hwrite.right(bestOfRunG, 4, summaryOutput);
 
-			System.out.println(bestOfRunR + " " + bestOfRunG);
+			//System.out.println(bestOfRunR + " " + bestOfRunG);
 
 			problem.doPrintGenes(bestOfRunChromo, summaryOutput);
 
-			bestFitnessOfRuns[R] = bestOfRunFitness;
+			//bestFitnessOfRuns[R] = bestOfRunFitness;
 
 			System.out.println(R + "\t" + "B" + "\t"+ (int)bestOfRunChromo.rawFitness);
 
 		} //End of a Run
 
-		System.exit(0);
+		Hwrite.left("B", 8, summaryOutput);
 
-		//Calculate for python file
+		problem.doPrintGenes(bestOverAllChromo, summaryOutput);
+
+		summaryOutput.close();
+
+		/*//Calculate for python file
 		//
 		for(int i = 0; i < Parameters.generations; i++){
 			double averageOfBest = 0;
@@ -522,7 +525,7 @@ public class Search {
 		System.out.println("Start:  " + startTime);
 		dateAndTime = Calendar.getInstance(); 
 		Date endTime = dateAndTime.getTime();
-		System.out.println("End  :  " + endTime);
+		System.out.println("End  :  " + endTime);*/
 
 	} // End of Main Class
 

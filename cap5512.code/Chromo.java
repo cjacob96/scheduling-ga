@@ -3,10 +3,7 @@
 *  Version 2, January 18, 2004
 *******************************************************************************/
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-
 import java.io.*;
-import java.sql.ParameterMetaData;
 import java.util.*;
 import java.text.*;
 import java.util.stream.IntStream;
@@ -75,11 +72,11 @@ public class Chromo
 		} else if(Parameters.rep == 2){
 			//In representation 2, each gene (slot) has a choice of 7 persons
 			//numGenes = 35, geneSize = 1
-			chromo = new int[35][1];
+			chromo = new int[Parameters.numGenes][Parameters.geneSize];
 
 			//Generate a random permutation of indices
 			List<Integer> list = new ArrayList<Integer>();
-			for (int i = 0; i < 35; i++){
+			for (int i = 0; i < Parameters.numGenes; i++){
 				list.add(i);
 			}
 			Collections.shuffle(list);
@@ -162,10 +159,10 @@ public class Chromo
 			case 1:
 				for (int i = 0; i < Parameters.numGenes; i++){
 					for (int j = 0; j < Parameters.geneSize; j++){
-						randnum = Search.r.nextDouble();
-						if (randnum < Parameters.mutationRate){
+						double rand = Search.r.nextDouble();
+						if (rand < Parameters.mutationRate){
 							//assign this seat randomly to another preson
-							int rand_person = r.nextInt(7);
+							int rand_person = Search.r.nextInt(7);
 							this.chromo[i][j] = rand_person;
 						}
 					}
@@ -186,7 +183,7 @@ public class Chromo
 
 		double rWheel = 0;
 		int j = 0;
-		int k = 0;
+		double k = 0.9;
 
 		double rand;
 
@@ -206,7 +203,7 @@ public class Chromo
 				rand = Search.r.nextDouble();
 				int randComp1 = Search.r.nextInt(Parameters.popSize);
 				int randComp2 = Search.r.nextInt(Parameters.popSize);
-				if(rand < 0.9){
+				if(rand < k){
 					if(Search.member[randComp1].rawFitness < Search.member[randComp2].rawFitness){
 						return randComp2;
 					} else{
@@ -219,6 +216,10 @@ public class Chromo
 						return randComp2;
 					}
 				}
+			case 4:
+				//To do
+				//Add rank selection method
+				break;
 			default:
 				System.out.println("ERROR - No selection method selected");
 		}
@@ -234,6 +235,7 @@ public class Chromo
 		int xoverPoint2;
 
 		switch(Parameters.xoverType){
+			//one-point crossover
 			case 1:
 				xoverPoint1 = Search.r.nextInt(35);
 

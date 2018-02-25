@@ -102,7 +102,7 @@ public class Scheduler extends FitnessFunction{
         } else if (Parameters.rep == 2){
 			//Initialize raw fitness to 0 first
 			X.rawFitness = 0;
-			if (DEBUG){
+			/*if (DEBUG){
 				System.out.println("Chromo is: ");
 				for (int i = 0; i < Parameters.numGenes; i++){
 					for (int j = 0; j < Parameters.geneSize; j++){
@@ -110,7 +110,8 @@ public class Scheduler extends FitnessFunction{
 					}
 				}
 				System.out.println();
-			}
+			}*/
+			
 			//Construct a 7-element array to track how many slots are assigned to the ith person
 			int[] assignment = {0,0,0,0,0,0,0};
 			for (int i = 0; i < Parameters.numGenes; i++){
@@ -142,7 +143,7 @@ public class Scheduler extends FitnessFunction{
     @Override
     public void doPrintGenes(Chromo X, FileWriter output) throws java.io.IOException {
 
-            for (int i=0; i<Parameters.numGenes; i++){
+            /*for (int i=0; i<Parameters.numGenes; i++){
                 Hwrite.right(X.getGeneAlpha(i),11,output);
             }
             output.write("   RawFitness");
@@ -151,7 +152,17 @@ public class Scheduler extends FitnessFunction{
                 Hwrite.right(X.getPosIntGeneValue(i),11,output);
             }
             Hwrite.right((int) X.rawFitness,13,output);
-            output.write("\n\n");
+            output.write("\n\n");*/
+		String s = "\nslot assignment:";
+		for (int i = 0; i < Parameters.numGenes; i++){
+			for (int j = 0; j < Parameters.geneSize; j++){
+				s += " " + X.chromo[i][j];
+			}
+		}
+		s += "\n";
+		output.write(s);
+		output.write("raw fitness: " + X.rawFitness);
+		output.write("\n\n");
     }
 
 
