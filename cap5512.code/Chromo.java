@@ -3,7 +3,6 @@
 *  Version 2, January 18, 2004
 *******************************************************************************/
 
-import com.sun.org.apache.xpath.internal.SourceTree;
 
 import java.io.*;
 import java.sql.ParameterMetaData;
@@ -41,7 +40,6 @@ public class Chromo
 		//a list of 5 times that they will occupy. Duplicates are allowed
 		//on different people, but discouraged in the fitness function
 		//Number of gene points gives the number of people to evaluate
-		if(Parameters.rep == 1){
 
 			chromo = new int[Parameters.numGenes][Parameters.geneSize];
 
@@ -68,11 +66,6 @@ public class Chromo
 			this.rawFitness = -1;   //  Fitness not yet evaluated
 			this.sclFitness = -1;   //  Fitness not yet scaled
 			this.proFitness = -1;   //  Fitness not yet proportionalized
-		} else if(Parameters.rep == 2){
-
-		} else if(Parameters.rep == 3){
-
-		}
 
     }
 
@@ -200,12 +193,25 @@ public class Chromo
                             child1.chromo[i][j] = parent1.chromo[i][j];
                             child2.chromo[i][j] = parent2.chromo[i][j];
                         }else{
-                            child1.chromo[i][j] = parent2.chromo[i][j];
-                            child2.chromo[i][j] = parent1.chromo[i][j];
+							child1.chromo[i][j] = parent2.chromo[i][j];
+							child2.chromo[i][j] = parent1.chromo[i][j];
                         }
                     }
                 }
 				break;
+			case 3:
+				for(int i = 0; i < Parameters.numGenes; i++){
+					for(int j = 0; j < Parameters.geneSize; j++){
+						double xOverProb = Search.r.nextDouble();
+						if(xOverProb < 0.3){
+							child1.chromo[i][j] = parent1.chromo[i][j];
+							child2.chromo[i][j] = parent2.chromo[i][j];
+						}else{
+							child1.chromo[i][j] = parent2.chromo[i][j];
+							child2.chromo[i][j] = parent1.chromo[i][j];
+						}
+					}
+				}
 			default:
 				System.out.println("ERROR - Bad crossover method selected");
 		}

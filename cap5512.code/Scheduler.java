@@ -17,7 +17,6 @@ public class Scheduler extends FitnessFunction{
     int countInvalid;
 
     int rep;
-
     //The input table which contains preferences
     int[][] table;
 
@@ -50,7 +49,6 @@ public class Scheduler extends FitnessFunction{
     @Override
     public void doRawFitness(Chromo X){
 
-        if(Parameters.rep == 1){
             //Initialize counters to 0
             countInvalid = 0;
             Arrays.fill(countDuplicates, 0);
@@ -97,7 +95,6 @@ public class Scheduler extends FitnessFunction{
 //            System.out.println(X.rawFitness);
 
         }
-    }
 
 //  PRINT OUT AN INDIVIDUAL GENE TO THE SUMMARY FILE *********************************
 

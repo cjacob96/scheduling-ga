@@ -40,7 +40,6 @@ public class Parameters
 	public static int geneSize;
 	public static int numDays = 7;
 	public static int numTimeSlots = 5;
-	public static int rep = 0;
 
 /*******************************************************************************
 *                              CONSTRUCTORS                                    *

@@ -5,7 +5,6 @@
 
 import java.io.*;
 import java.util.*;
-import java.text.*;
 
 public class Search {
 
@@ -109,7 +108,8 @@ public class Search {
 		} else if (Parameters.problemType.equals("OM")){
 				problem = new OneMax();
 		} else if (Parameters.problemType.equals("SC")){
-			Scanner input = new Scanner(new File("../input/testdata1"));
+			//INPUT DATA CHOICE
+			Scanner input = new Scanner(new File(Parameters.dataInputFileName));
 
 			input_table = new int[Parameters.numGenes][Parameters.numTimeSlots * Parameters.numDays];
 			for(int i = 0; i < Parameters.numGenes; i++){
@@ -122,18 +122,6 @@ public class Search {
 
 			input.close();
 
-			System.out.println("Which representation would you like to run? (1, 2, 3)");
-			if(args.length < 2){
-				Scanner stdin = new Scanner(System.in);
-				int rep = stdin.nextInt();
-				System.out.println(rep);
-				Parameters.rep = rep;
-				stdin.close();
-			} else{
-				int rep = Integer.parseInt(args[1]);
-				Parameters.rep = rep;
-			}
-
             problem = new Scheduler(input_table);
 
 		} else System.out.println("Invalid Problem Type");
@@ -145,7 +133,7 @@ public class Search {
 		System.out.println(problem.name);
 
 	//	Initialize RNG, array sizes and other objects
-//		r.setSeed(Parameters.seed);
+		r.setSeed(Parameters.seed);
 		memberIndex = new int[Parameters.popSize];
 		memberFitness = new double[Parameters.popSize];
 		member = new Chromo[Parameters.popSize];
@@ -485,7 +473,8 @@ public class Search {
 		//
 		//
 
-		ScheduleHelpers.printChromo(bestOverAllChromo);
+//		ScheduleHelpers.printChromo(bestOverAllChromo);
+
 		Hwrite.left("B", 8, summaryOutput);
 
 		problem.doPrintGenes(bestOverAllChromo, summaryOutput);
