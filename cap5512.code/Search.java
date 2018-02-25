@@ -135,7 +135,7 @@ public class Search {
 			}
 			System.exit(0);*/
 
-			System.out.println("Which representation would you like to run? (1, 2, 3)");
+			/*System.out.println("Which representation would you like to run? (1, 2, 3)");
 			if(args.length < 2){
 				Scanner stdin = new Scanner(System.in);
 				int rep = stdin.nextInt();
@@ -145,7 +145,8 @@ public class Search {
 			} else{
 				int rep = Integer.parseInt(args[1]);
 				Parameters.rep = rep;
-			}
+			}*/
+			Parameters.rep = 2;
 
             problem = new Scheduler(input_table);
 
