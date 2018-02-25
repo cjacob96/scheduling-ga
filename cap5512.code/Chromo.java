@@ -204,13 +204,13 @@ public class Chromo
 				int randComp1 = Search.r.nextInt(Parameters.popSize);
 				int randComp2 = Search.r.nextInt(Parameters.popSize);
 				if(rand < k){
-					if(Search.member[randComp1].rawFitness < Search.member[randComp2].rawFitness){
+					if(Search.member[randComp1].proFitness < Search.member[randComp2].proFitness){
 						return randComp2;
 					} else{
 						return randComp1;
 					}
 				}else{
-					if(Search.member[randComp1].rawFitness < Search.member[randComp2].rawFitness) {
+					if(Search.member[randComp1].proFitness < Search.member[randComp2].proFitness) {
 						return randComp1;
 					}else{
 						return randComp2;
@@ -219,6 +219,19 @@ public class Chromo
 			case 4:
 				//To do
 				//Add rank selection method
+				//To implement rank selection, scale type must be 3 or 4. 
+				if (Parameters.scaleType == 0 || Parameters.scaleType == 1){
+					System.out.println("Error - to use rank selection, please change scale type to rank 2 or 3");
+					return -1;
+				} else {
+					//Normal proportional selection
+					rand = Search.r.nextDouble();
+					for (j = 0; j < Parameters.popSize; j++){
+						rWheel = rWheel + Search.member[Search.memberIndex[j]].proFitness;
+						if (rand < rWheel)
+							return Search.memberIndex[j];
+					}
+				}
 				break;
 			default:
 				System.out.println("ERROR - No selection method selected");

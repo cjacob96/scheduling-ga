@@ -51,7 +51,7 @@ public class Search {
 	public static Random r = new Random();
 	private static double randnum;
 
-	private static int memberIndex[];
+	public static int memberIndex[];
 	private static double memberFitness[];
 	private static int TmemberIndex;
 	private static double TmemberFitness;
@@ -87,7 +87,8 @@ public class Search {
 
 	//  Write Parameters To Summary Output File
 		String summaryFileName = Parameters.expID + "_summary.txt";
-		FileWriter testingGen = new FileWriter("testingGen.txt");
+		String resultFileName = args[0].substring(0, 15) + ".csv";
+		FileWriter testingGen = new FileWriter(resultFileName);
 		FileWriter summaryOutput = new FileWriter(summaryFileName);
 		parmValues.outputParameters(summaryOutput);
 
@@ -112,7 +113,7 @@ public class Search {
 		} else if (Parameters.problemType.equals("OM")){
 				problem = new OneMax();
 		} else if (Parameters.problemType.equals("SC")){
-			Scanner input = new Scanner(new File("../input/testdata1"));
+			Scanner input = new Scanner(new File("input/testdata2"));
 
 			//construct a 7 * 35 preference table
 			input_table = new int[7][Parameters.numTimeSlots * Parameters.numDays];
@@ -274,6 +275,7 @@ public class Search {
 				Hwrite.right(averageRawFitness, 11, 3, summaryOutput);
 				Hwrite.right(stdevRawFitness, 11, 3, summaryOutput);
 				summaryOutput.write("\n");
+				testingGen.write(R + "," + G + "," + (int)bestOfGenChromo.rawFitness + "," + averageRawFitness + "," + stdevRawFitness + "\n");
 
 
 		// *********************************************************************
@@ -432,6 +434,8 @@ public class Search {
 		problem.doPrintGenes(bestOverAllChromo, summaryOutput);
 
 		summaryOutput.close();
+
+		testingGen.close();
 
 		/*//Calculate for python file
 		//

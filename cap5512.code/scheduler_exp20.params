@@ -3,7 +3,7 @@ Problem Type                 :SC
 Data Input File Name         :NA
 Number of Runs               :50
 Generations per Run          :100
-Population Size              :500
+Population Size              :2000
 Selection Method (1)         :4
 Fitness Scaling Type (2)     :3
 Crossover Type (3)           :1
